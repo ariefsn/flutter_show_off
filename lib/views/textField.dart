@@ -22,6 +22,9 @@ class _MyTextFieldState extends State<MyTextField> {
   TextEditingController _radiusBottomLeft = TextEditingController(text: "0");
   TextEditingController _radiusBottomRight = TextEditingController(text: "0");
   TextEditingController _maxLength = TextEditingController(text: "100");
+  TextEditingController _prefixText = TextEditingController(text: "");
+  TextEditingController _suffixText = TextEditingController(text: "");
+  TextEditingController _helperText = TextEditingController(text: "");
 
   TextStyle _textStyle;
   TextDirection _textDirection = textDirectionList[0]["value"];
@@ -130,7 +133,11 @@ class _MyTextFieldState extends State<MyTextField> {
           isDense: true,
           counterText: _counterText,
           labelText: "Type Here",
-          labelStyle: TextStyle(fontWeight: FontWeight.bold)
+          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+          prefixText: _prefixText.text == "" ? null : _prefixText.text + " ",
+          suffixText: _suffixText.text == "" ? null : " " + _suffixText.text,
+          enabled: _enabled,
+          helperText: _helperText.text == "" ? null : _helperText.text,
         ),
       );
 
@@ -523,6 +530,63 @@ class _MyTextFieldState extends State<MyTextField> {
                     value: _colorBackgroundSelected,
                     hint: Text("Choose Background Color"),
                     colorBox: true,
+                  ),
+                ),
+                ListTile(
+                  enabled: _addInputDecoration,
+                  dense: true,
+                  title: Text("Prefix Text"),
+                  trailing: Container(
+                    child: TextField(
+                      enabled: _addInputDecoration,
+                      controller: _prefixText,
+                      onSubmitted: (v) {
+                        setState(() {
+                          _prefixText.text = v;
+                        });
+                      },
+                      textAlign: TextAlign.start,
+                      keyboardType: TextInputType.text,
+                    ),
+                    width: 205,
+                  ),
+                ),
+                ListTile(
+                  enabled: _addInputDecoration,
+                  dense: true,
+                  title: Text("Suffix Text"),
+                  trailing: Container(
+                    child: TextField(
+                      enabled: _addInputDecoration,
+                      controller: _suffixText,
+                      onSubmitted: (v) {
+                        setState(() {
+                          _suffixText.text = v;
+                        });
+                      },
+                      textAlign: TextAlign.start,
+                      keyboardType: TextInputType.text,
+                    ),
+                    width: 205,
+                  ),
+                ),
+                ListTile(
+                  enabled: _addInputDecoration,
+                  dense: true,
+                  title: Text("Helper Text"),
+                  trailing: Container(
+                    child: TextField(
+                      enabled: _addInputDecoration,
+                      controller: _helperText,
+                      onSubmitted: (v) {
+                        setState(() {
+                          _helperText.text = v;
+                        });
+                      },
+                      textAlign: TextAlign.start,
+                      keyboardType: TextInputType.text,
+                    ),
+                    width: 205,
                   ),
                 ),
               ],
