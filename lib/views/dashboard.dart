@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_show_off/configs/listMenu.dart';
-// import 'package:flutter_show_off/components/ImageBox.dart';
-import 'package:flutter_show_off/views/textField.dart';
+import 'package:flutter_show_off/bloc/bloc.dart';
+import 'package:flutter_show_off/components/InheritedBloc.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({this.title});
@@ -14,6 +14,8 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int menuSelected;
+  final ShowoffBloc bloc = ShowoffBloc();
+
   Future<bool> _willPop() {
     return showDialog(
         context: context,
@@ -60,7 +62,10 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => listMenu[i]["view"],
+                        builder: (context) => InheritedBloc(
+                          child: listMenu[i]["view"],
+                          bloc: bloc,
+                        ),
                       ));
                 },
               );

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_show_off/views/textField.dart';
+import 'package:flutter_show_off/views/buttons.dart';
 
 var listMenu = [
   {
@@ -8,9 +8,9 @@ var listMenu = [
     "view": MyTextField(title: "Text Field",),
   },
   {
-    "title": "Widget 2",
+    "title": "Buttons",
     "description": "Lorem ipsum sit amet",
-    "view": MyTextField(title: "Widget 2",),
+    "view": MyButtons(title: "Buttons",),
   },
   {
     "title": "Widget 3",

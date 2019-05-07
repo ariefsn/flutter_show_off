@@ -37,8 +37,8 @@ class _MyTextFieldState extends State<MyTextField> {
   Map<String, dynamic> _textColorSelected = colorList[0];
 
   TextAlign _textAlign = textAlignList[0]["value"];
-  List<Map<String, dynamic>> _textAlignList = textAlignList;
-  Map<String, dynamic> _textAlignSelected = textAlignList[0];
+  // List<Map<String, dynamic>> _textAlignList = textAlignList;
+  // Map<String, dynamic> _textAlignSelected = textAlignList[0];
 
   bool _enabled, _isPassword, _addInputDecoration, _decorationBorder;
 

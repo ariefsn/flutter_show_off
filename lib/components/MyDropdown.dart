@@ -43,9 +43,11 @@ class MyDropdown extends StatelessWidget {
     return Container(
       width: 205,
       child: DropdownButton(
+        key: key,
         isExpanded: true,
         items: items.map((Map<String, dynamic> value) {
           return DropdownMenuItem(
+            key: UniqueKey(),
             child: Row(
               children: <Widget>[
                 colorBox ? Container(
