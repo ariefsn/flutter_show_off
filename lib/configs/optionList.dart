@@ -20,6 +20,7 @@ List<Map<String, dynamic>> colorList = [
     { "label": "Yellow", "value" : Colors.yellow },
     { "label": "Amber", "value" : Colors.amber },
     { "label": "Black", "value" : Colors.black },
+    { "label": "White", "value" : Colors.white },
     { "label": "Brown", "value" : Colors.brown },
     { "label": "Cyan", "value" : Colors.cyan },
     { "label": "Grey", "value" : Colors.grey },
@@ -55,4 +56,12 @@ List<Map<String, dynamic>> iconList = [
     { "label": "Book", "value" : Icons.book },
     { "label": "Power Setting New", "value" : Icons.power_settings_new },
     { "label": "Lock", "value" : Icons.lock },
+  ];
+
+List<Map<String, String>> borderRadiusType = [
+    { "label": "All", "value" : "all" },
+    { "label": "Circular", "value" : "circular" },
+    { "label": "Only", "value" : "only" },
+    { "label": "Horizontal", "value" : "horizontal" },
+    { "label": "Vertical", "value" : "vertical" },
   ];

@@ -22,23 +22,6 @@ class MyDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<Widget> widgetItems(bool colorbox, Map<String, dynamic> value) {
-    //   List<Widget> defaultWidgets = [
-    //     Padding(padding: EdgeInsets.all(10.0),),
-    //     Text(value["label"])
-    //   ];
-
-    //   if (colorbox) {
-    //     defaultWidgets.insert(0, Container(
-    //         color: value["value"],
-    //         height: 20.0,
-    //         width: 20.0,
-    //       )
-    //     );
-    //   }
-
-    //   return defaultWidgets;
-    // }
 
     return Container(
       width: 205,

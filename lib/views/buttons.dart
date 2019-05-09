@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_show_off/views/flatButtonWithConfig.dart';
-import 'package:flutter_show_off/components/InheritedBloc.dart';
+// import 'package:flutter_show_off/components/InheritedBloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_show_off/bloc/bloc.dart';
+import 'package:flutter_show_off/views/raisedButtonWithConfig.dart';
 
 class MyButtons extends StatefulWidget {
   MyButtons({
@@ -47,7 +50,7 @@ class _MyButtonsState extends State<MyButtons> with SingleTickerProviderStateMix
       body: TabBarView(
         controller: _tabController,
         children: _tabView.map((Tab tab) {
-          return tab.key == Key("flat") ? MyFlatButtonWithConfig() : Text("Raised Cuy = ${InheritedBloc.of(context).bloc.currentState.flatButtonState.width}");
+          return tab.key == Key("flat") ? MyFlatButtonWithConfig() : MyRaisedButtonWithConfig();
         }).toList(),
       ),
       bottomNavigationBar: TabBar(

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_show_off/configs/listMenu.dart';
 import 'package:flutter_show_off/bloc/bloc.dart';
-import 'package:flutter_show_off/components/InheritedBloc.dart';
+// import 'package:flutter_show_off/components/InheritedBloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({this.title});
@@ -14,7 +15,9 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int menuSelected;
-  final ShowoffBloc bloc = ShowoffBloc();
+  MainBloc _mainBloc;
+  FlatButtonBloc _flatButtonBloc;
+  RaisedButtonBloc _raisedButtonBloc;
 
   Future<bool> _willPop() {
     return showDialog(
@@ -39,6 +42,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    _mainBloc = BlocProvider.of<MainBloc>(context);
+    _flatButtonBloc = BlocProvider.of<FlatButtonBloc>(context);
+    _raisedButtonBloc = BlocProvider.of<RaisedButtonBloc>(context);
+
     return WillPopScope(
       onWillPop: _willPop,
       child: Scaffold(
@@ -62,9 +69,17 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => InheritedBloc(
+                        // builder: (context) => InheritedBloc(
+                        //   child: listMenu[i]["view"],
+                        //   bloc: bloc,
+                        // ),
+                        builder: (context) => BlocProviderTree(
+                          blocProviders: [
+                            BlocProvider<MainBloc>(bloc: _mainBloc),
+                            BlocProvider<FlatButtonBloc>(bloc: _flatButtonBloc),
+                            BlocProvider<RaisedButtonBloc>(bloc: _raisedButtonBloc,),
+                          ],
                           child: listMenu[i]["view"],
-                          bloc: bloc,
                         ),
                       ));
                 },

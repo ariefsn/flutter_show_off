@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_show_off/components/MyButtons.dart';
 import 'package:flutter_show_off/components/MyDropdown.dart';
+import 'package:flutter_show_off/components/MySeparators.dart';
 import 'package:flutter_show_off/configs/optionList.dart';
 import 'package:flutter_show_off/bloc/bloc.dart';
-import 'package:flutter_show_off/components/InheritedBloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_show_off/components/MyTextField.dart';
 
 class MyFlatButtonWithConfig extends StatefulWidget {
   @override
@@ -12,265 +13,278 @@ class MyFlatButtonWithConfig extends StatefulWidget {
 }
 
 class _MyFlatButtonWithConfigState extends State<MyFlatButtonWithConfig> {
-  TextEditingController _width = TextEditingController(text: "200");
-  TextEditingController _radiusTopLeft = TextEditingController(text: "0");
-  TextEditingController _radiusTopRight = TextEditingController(text: "0");
-  TextEditingController _radiusBottomLeft = TextEditingController(text: "0");
-  TextEditingController _radiusBottomRight = TextEditingController(text: "0");
-
-  Color _color, _splashColor, _disabledColor, _textColor, _highlightColor;
-  Map<String, dynamic> _colorSelected, _splashColorSelected, _disabledColorSelected, _textColorSelected, _highlightColorSelected;
-  EdgeInsetsGeometry _padding;
-  bool _disabled;
+  Map<String, dynamic> _colorSelected, _splashColorSelected, _disabledColorSelected, _textColorSelected, _highlightColorSelected, _disabledTextColorSelected;
 
   @override
   void initState() {
     super.initState();
-    // _color = colorList[0]["value"];
-    // _colorSelected = colorList[0];
-    _splashColor = colorList[0]["value"];
+    _colorSelected = colorList[0];
     _splashColorSelected = colorList[0];
-    _disabledColor = colorList[0]["value"];
     _disabledColorSelected = colorList[0];
-    // _textColor = colorList[0]["value"];
-    // _textColorSelected = colorList[0];
-    _highlightColor = colorList[0]["value"];
+    _disabledTextColorSelected = colorList[0];
     _highlightColorSelected = colorList[0];
-    _disabled = false;
+  }
+
+  Map<String, dynamic> getColorSelected(Color color) {
+    var res = colorList.where((e) => e["value"] == color).toList();
+    return res[0];
   }
 
   @override
   Widget build(BuildContext context) {
-    final _bloc = InheritedBloc.of(context).bloc;
+    final _bloc = BlocProvider.of<FlatButtonBloc>(context);
 
-    return BlocBuilder(
-      bloc: _bloc,
-      builder: (BuildContext context, InitialShowoffState state) {
-        _width.text = state.flatButtonState.width.toString();
-        _color = state.flatButtonState.color;
-        _colorSelected = colorList.where((e) => e["value"] == _color).toList()[0];
-        _textColor = state.flatButtonState.textColor;
-        _textColorSelected = colorList.where((e) => e["value"] == _textColor).toList()[0];
-
-        print("rebuild!!!");
-        print("_color = $_color");
+    return StreamBuilder(
+      stream: _bloc.outFlatButton,
+      initialData: _bloc.currentState,
+      builder: (BuildContext context, AsyncSnapshot<FlatButtonState> state) {
+        _colorSelected = getColorSelected(state.data.color);
+        _textColorSelected = getColorSelected(state.data.textColor);
+        _splashColorSelected = getColorSelected(state.data.splashColor);
+        _disabledColorSelected = getColorSelected(state.data.disabledColor);
+        _disabledTextColorSelected = getColorSelected(state.data.disabledTextColor);
+        _highlightColorSelected = getColorSelected(state.data.highlightColor);
 
         return Column(
-        children: <Widget>[
-          MyFlatButton(
-            width: state.flatButtonState.width,
-            color: state.flatButtonState.color,
-            disabledColor: state.flatButtonState.disabledColor,
-            highlightColor: state.flatButtonState.highlightColor,
-            onPressed: _disabled ? null : () {},
-            padding: state.flatButtonState.padding,
-            splashColor: state.flatButtonState.splashColor,
-            textColor: state.flatButtonState.textColor,
-            borderBottomLeft: state.flatButtonState.borderBottomLeft,
-            borderBottomRight: state.flatButtonState.borderBottomRight,
-            borderTopLeft: state.flatButtonState.borderTopLeft,
-            borderTopRight: state.flatButtonState.borderTopRight,
-          ),
-          Expanded(
-            flex: 1,
-            child: ListView(
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(),
-              children: <Widget>[
-                ListTile(
-                  dense: true,
-                  title: Text("Width"),
-                  trailing: Container(
-                    child: TextField(
-                      controller: _width,
-                      onChanged: (v) {
-                        state.flatButtonState.width = double.parse(v);
-                        _bloc.inFlatButton.add(state.flatButtonState);
-                      },
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
-                    ),
-                    width: 205,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Color"),
-                  trailing: MyDropdown(
-                    items: colorList,
-                    onChanged: (value) {
-                      state.flatButtonState.color = value["value"];
-                      _bloc.inFlatButton.add(state.flatButtonState);
-                      _bloc.dispatch(Actions.getFlatButtonState);
-                    },
-                    value: _colorSelected,
-                    hint: Text("Choose Color"),
-                    colorBox: true,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Text Color"),
-                  trailing: MyDropdown(
-                    items: colorList,
-                    onChanged: (value) {
-                      state.flatButtonState.textColor = value["value"];
-                      _bloc.inFlatButton.add(state.flatButtonState);
-                      _bloc.dispatch(Actions.getFlatButtonState);
-                      // setState(() {
-                      //   _textColor = value["value"];
-                      //   _textColorSelected = value;
-                      // });
-                    },
-                    value: _textColorSelected,
-                    hint: Text("Choose Text Color"),
-                    colorBox: true,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Disabled"),
-                  trailing: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Text("No"),
-                        Switch(
-                          value: _disabled,
-                          activeColor: Colors.lightGreen,
-                          inactiveThumbColor: Colors.red,
-                          onChanged: (v) {
-                            setState(() {
-                              _disabled = v;
-                            });
-                          },
-                        ),
-                        Text("Yes")
-                      ],
-                    ),
-                    width: 101.0,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Disabled Color"),
-                  trailing: MyDropdown(
-                    items: colorList,
-                    onChanged: (value) {
-                      setState(() {
-                        _disabledColor = value["value"];
-                        _disabledColorSelected = value;
-                      });
-                    },
-                    value: _disabledColorSelected,
-                    hint: Text("Choose Disabled Color"),
-                    colorBox: true,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Splash Color"),
-                  trailing: MyDropdown(
-                    items: colorList,
-                    onChanged: (value) {
-                      setState(() {
-                        _splashColor = value["value"];
-                        _splashColorSelected = value;
-                      });
-                    },
-                    value: _splashColorSelected,
-                    hint: Text("Choose Splash Color"),
-                    colorBox: true,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Highlight Color"),
-                  trailing: MyDropdown(
-                    items: colorList,
-                    onChanged: (value) {
-                      setState(() {
-                        _highlightColor = value["value"];
-                        _highlightColorSelected = value;
-                      });
-                    },
-                    value: _highlightColorSelected,
-                    hint: Text("Choose Highlight Color"),
-                    colorBox: true,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Border Top Left"),
-                  trailing: Container(
-                    child: TextField(
-                      controller: _radiusTopLeft,
-                      onSubmitted: (v) {
-                        setState(() {
-                          _radiusTopLeft.text = v;
-                        });
-                      },
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
-                    ),
-                    width: 205,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Border Top Right"),
-                  trailing: Container(
-                    child: TextField(
-                      controller: _radiusTopRight,
-                      onSubmitted: (v) {
-                        setState(() {
-                          _radiusTopRight.text = v;
-                        });
-                      },
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
-                    ),
-                    width: 205,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Border Bottom Left"),
-                  trailing: Container(
-                    child: TextField(
-                      controller: _radiusBottomLeft,
-                      onSubmitted: (v) {
-                        setState(() {
-                          _radiusBottomLeft.text = v;
-                        });
-                      },
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
-                    ),
-                    width: 205,
-                  ),
-                ),
-                ListTile(
-                  dense: true,
-                  title: Text("Border Bottom Right"),
-                  trailing: Container(
-                    child: TextField(
-                      controller: _radiusBottomRight,
-                      onSubmitted: (v) {
-                        setState(() {
-                          _radiusBottomRight.text = v;
-                        });
-                      },
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
-                    ),
-                    width: 205,
-                  ),
-                ),
-              ],
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+              child: MyFlatButton(
+                height: state.data.height,
+                width: state.data.width,
+                color: state.data.color,
+                disabledColor: state.data.disabledColor,
+                disabledTextColor: state.data.disabledTextColor,
+                highlightColor: state.data.highlightColor,
+                onPressed: state.data.disabled ? null : () {},
+                padding: state.data.padding,
+                splashColor: state.data.splashColor,
+                textColor: state.data.textColor,
+                borderBottomLeft: state.data.borderBottomLeft,
+                borderBottomRight: state.data.borderBottomRight,
+                borderTopLeft: state.data.borderTopLeft,
+                borderTopRight: state.data.borderTopRight,
+              ),
             ),
-          ),
-        ],
-      );
+            Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: MySimpleSeparator(height: 3.0),
+            ),
+            Expanded(
+              flex: 1,
+              child: ListView(
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                children: <Widget>[
+                  ListTile(
+                    dense: true,
+                    title: Text("Width"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.width.toStringAsFixed(0),
+                        onChanged: (v) {
+                          _bloc.currentState.width = double.parse(v);  
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Height"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.height.toStringAsFixed(0),
+                        onChanged: (v) {
+                          double.parse(v) > 250.0 ? _bloc.currentState.height = 250.0 : _bloc.currentState.height = double.parse(v);
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Color"),
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: (value) {
+                        _bloc.currentState.color = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _colorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _colorSelected,
+                      hint: Text("Choose Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Text Color"),
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: (value) {
+                        _bloc.currentState.textColor = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _textColorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _textColorSelected,
+                      hint: Text("Choose Text Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Disabled"),
+                    trailing: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Text("No"),
+                          Switch(
+                            value: _bloc.currentState.disabled,
+                            activeColor: Colors.lightGreen,
+                            inactiveThumbColor: Colors.red,
+                            onChanged: (v) {
+                              _bloc.currentState.disabled = v;
+                              _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                            },
+                          ),
+                          Text("Yes")
+                        ],
+                      ),
+                      width: 101.0,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Disabled Color"),
+                    enabled: _bloc.currentState.disabled,
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: !_bloc.currentState.disabled ? null : (value) {
+                        _bloc.currentState.disabledColor = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _disabledColorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _disabledColorSelected,
+                      hint: Text("Choose Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Disabled Text Color"),
+                    enabled: _bloc.currentState.disabled,
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: !_bloc.currentState.disabled ? null : (value) {
+                        _bloc.currentState.disabledTextColor = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _disabledTextColorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _disabledTextColorSelected,
+                      hint: Text("Choose Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Splash Color"),
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: (value) {
+                        _bloc.currentState.splashColor = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _splashColorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _splashColorSelected,
+                      hint: Text("Choose Splash Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Highlight Color"),
+                    trailing: MyDropdown(
+                      items: colorList,
+                      onChanged: (value) {
+                        _bloc.currentState.highlightColor = value["value"];
+                        _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        _highlightColorSelected = colorList.where((e) => e["value"] == value["value"]).toList()[0];
+                      },
+                      value: _highlightColorSelected,
+                      hint: Text("Choose Highlight Color"),
+                      colorBox: true,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Border Top Left"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.borderTopLeft.toStringAsFixed(0),
+                        onChanged: (v) {
+                          _bloc.currentState.borderTopLeft = double.parse(v);  
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Border Top Right"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.borderTopRight.toStringAsFixed(0),
+                        onChanged: (v) {
+                          _bloc.currentState.borderTopRight = double.parse(v);  
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Border Bottom Left"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.borderBottomLeft.toStringAsFixed(0),
+                        onChanged: (v) {
+                          _bloc.currentState.borderBottomLeft = double.parse(v);  
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                  ListTile(
+                    dense: true,
+                    title: Text("Border Bottom Right"),
+                    trailing: Container(
+                      child: TextFieldFixCursorSelection(
+                        textInputType: TextInputType.number,
+                        value: state.data.borderBottomRight.toStringAsFixed(0),
+                        onChanged: (v) {
+                          _bloc.currentState.borderBottomRight = double.parse(v);  
+                          _bloc.dispatch(FlatButtonAction(flatButtonState: _bloc.currentState));
+                        },
+                      ),
+                      width: 205,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
       }
     );
   }
